@@ -1,9 +1,9 @@
 from main.db.data import get_db_connection
 def get(name):
   conn = get_db_connection()
-  users = conn.execute(f"SELECT id,nickname,email,created_at FROM USER where id='{name}'").fetchall()
+  user = conn.execute(f"SELECT id,nickname,email,created_at FROM USER where id='{name}'").fetchall()
   conn.close()
-  return users
+  return user
 
 def get_all():
   conn = get_db_connection()
@@ -13,7 +13,13 @@ def get_all():
 
 def insert_one(user_id, user_nickname, user_pw_hash, user_email, now):
   conn = get_db_connection()
-  users = conn.execute(f"insert into USER (id, nickname, pw, email, created_at ) values ('{user_id}', '{user_nickname}', '{user_pw_hash}', '{user_email}', '{now}')").fetchall()
+  user = conn.execute(f"insert into USER (id, nickname, pw, email, created_at ) values ('{user_id}', '{user_nickname}', '{user_pw_hash}', '{user_email}', '{now}')").fetchall()
   conn.commit()
   conn.close()
-  return users
+  return user
+
+def login(id, pw):
+  conn = get_db_connection()
+  user = conn.execute(f"SELECT id,nickname,email,created_at FROM USER where id='{id}' and pw='{pw}'").fetchall()
+  conn.close()
+  return user
