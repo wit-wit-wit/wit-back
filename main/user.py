@@ -26,44 +26,41 @@ def register():
   # 이미 존재하는 아이디면 패스!
   result = user.get(user_id)
   if len(result):
-    return jsonify({'result': 'fail', 'msg': '이미 존재 하는 ID 입니다!'})
+    return json.dumps({'result': 'fail', 'msg': '이미 존재 하는 ID 입니다!'},ensure_ascii=False)
   else:
     user.insert_one(user_id, user_nickname, user_pw_hash, user_email, now)
-  return jsonify({'result': 'success'})
+  return json.dumps({'result': 'success'},ensure_ascii=False)
 
 
 
 @blueprint.route('/get')
 def get_all_user():
-  all_data = user.get_all()
-  print(all_data)
-  return all_data
-#
-# @blueprint.route('/login', methods=['POST'])
-# def login():
-#   user_id = request.form['id']
-#   user_pw = request.form['pw']
-#
-#   # 회원가입 때와 같은 방법으로 pw를 암호화합니다.
-#   user_pw_hash = hashlib.sha256(user_pw.encode('utf-8')).hexdigest()
-#
-#   # id, 암호화된pw을 가지고 해당 유저를 찾습니다.
-#   result = db.user.find_one({'id': user_id, 'pw': user_pw_hash})
-#   print(user_pw_hash)
-#
-#   # 찾으면 JWT 토큰을 만들어 발급합니다.
-#   if result is not None:
-#     # # JWT 토큰 생성
-#     # payload = {
-#     #   'id': id_receive,
-#     #   'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=100)
-#     # }
-#     # token = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
-#     #
-#     # # token을 줍니다.
-#     return jsonify({'result': 'success', 'id':user_id})
-#   else:
-#     return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
+  return json.dumps({'result': 'success', 'user':user.get_all() },ensure_ascii=False)
+
+@blueprint.route('/login', methods=['POST'])
+def login():
+  user_id = request.form['id']
+  user_pw = request.form['pw']
+
+  # 회원가입 때와 같은 방법으로 pw를 암호화합니다.
+  user_pw_hash = hashlib.sha256(user_pw.encode('utf-8')).hexdigest()
+
+  # id, 암호화된pw을 가지고 해당 유저를 찾습니다.
+  result = user.login(user_id,user_pw_hash)
+
+  # 찾으면 JWT 토큰을 만들어 발급합니다.
+  if len(result):
+    # # JWT 토큰 생성
+    # payload = {
+    #   'id': id_receive,
+    #   'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=100)
+    # }
+    # token = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
+    #
+    # # token을 줍니다.
+    return json.dumps({'result': 'success', 'user':result},ensure_ascii=False)
+  else:
+    return json.dumps({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'},ensure_ascii=False)
 
 @blueprint.route('/edit')
 def edit():
