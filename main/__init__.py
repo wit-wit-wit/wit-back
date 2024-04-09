@@ -3,7 +3,7 @@ from flask_pymongo import PyMongo
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = 'mongodb+srv://gun7728:FuvEduCUdIrwcdlt@wit.1hikp2t.mongodb.net/?retryWrites=true&w=majority&appName=wit'
+app.config['MONGO_URI'] = 'mongodb+srv://gun7728:FuvEduCUdIrwcdlt@wit.1hikp2t.mongodb.net/?retryWrites=true&w=majority&appName=wit&tlsAllowInvalidCertificates=true'
 now = str(datetime.now())
 db = PyMongo(app).cx['wit']
 
